@@ -1,0 +1,6 @@
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\bin\Debug\SolutionsOfSplitingBIlls.exe.config
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\bin\Debug\SolutionsOfSplitingBIlls.exe
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\bin\Debug\SolutionsOfSplitingBIlls.pdb
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\obj\Debug\SolutionsOfSplitingBIlls.csprojResolveAssemblyReference.cache
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\obj\Debug\SolutionsOfSplitingBIlls.exe
+c:\users\zhou\documents\visual studio 2017\Projects\SolutionsOfSplitingBIlls\SolutionsOfSplitingBIlls\obj\Debug\SolutionsOfSplitingBIlls.pdb
