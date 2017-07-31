@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace SolutionOfSplitingBills
 {
@@ -12,6 +13,7 @@ namespace SolutionOfSplitingBills
         private string[] strOfFile; //store string representation of input file
         private int countParticipant = 0;//count how many participants have actually been added into participant array
         private int countCharge = 0;//count how many charges have actually been added into charge array
+        private string fileName = ""; //hold the file name for the selected file
         private const string INTPATTERN = @"^-?\d+$";
         private const string MSGAFTERERR = ", and press any key to continue";
         private const string ZERO = "0";
@@ -23,28 +25,42 @@ namespace SolutionOfSplitingBills
         private const string NEGVALUE = "Value is negative";
         private const string INVALIDINTFORMAT = "The format for Integer type is invalid";
 
-
         //parse file to an array of string, one line at a time
         public void StrRepOfFile()
         {
-            //read file one line at a time and store them into a string array
-            string[] strTemp = System.IO.File.ReadAllLines("expenses.txt");
-            //Console.WriteLine("Contents of input1 is ");
-            List<string> tempList = new List<string>();
-            //add each nonempty line to a temp list
-           // int count = 0;
-            foreach (string line in strTemp)
+            Console.Write("Press Enter to open the input file ");
+            Console.ReadLine();
+            OpenFileDialog ofd = new OpenFileDialog();
+            //Debug.Print($"current path is {Directory.GetCurrentDirectory()}");
+            ofd.InitialDirectory = $"{Directory.GetCurrentDirectory()}";
+            ofd.Title = "Select Input File";
+            ofd.DefaultExt = "txt";
+            ofd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            if(ofd.ShowDialog() == DialogResult.OK)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+                fileName = ofd.SafeFileName;
+                //clear the content from previous output in case users want to try the same input file
+                this.ClearOutputOrCreateOutputFile();
+                //Debug.Print($"the file name is {fileName}");
+                //read file one line at a time and store them into a string array
+                string[] strTemp = System.IO.File.ReadAllLines($"{fileName}");
+                //Console.WriteLine("Contents of input1 is ");
+                List<string> tempList = new List<string>();
+                //add each nonempty line to a temp list
+                // int count = 0;
+                foreach (string line in strTemp)
                 {
-                    tempList.Add(line);
-                }
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        tempList.Add(line);
+                    }
 
+                }
+                //convert list to an array
+                this.strOfFile = tempList.ToArray();
+                //suppend console
+                //Console.ReadLine(); 
             }
-            //convert list to an array
-            this.strOfFile = tempList.ToArray();
-            //suppend console
-            //Console.ReadLine(); 
         }
 
         //convert string array to array of Participants
@@ -130,11 +146,22 @@ namespace SolutionOfSplitingBills
         //write to a text file with associated money for each participant
         public void WriteToFile(double avg, Participant[] parts)
         {
-            StreamWriter sw = new StreamWriter(@"expenses.txt.out", true);
+            StreamWriter sw = new StreamWriter($"{fileName}.out", true);
+            //start writting to the output file
             for (int i = 0; i < parts.Length; i++)
             {    
                 double reminder = Math.Round(avg - parts[i].GetTotalMoney(), 2);
-                sw.WriteLine($"${reminder}");
+                //check if reminder is negative or positive, if positive, just write the value, otherwise, add backets around the value
+                if(reminder < 0)
+                {
+                    double absRem = Math.Abs(reminder);
+                    sw.WriteLine($"(${absRem})");
+                }
+                else
+                {
+                    sw.WriteLine($"${reminder}");
+                }
+                
             }
             sw.WriteLine();
             sw.WriteLine();
@@ -146,17 +173,13 @@ namespace SolutionOfSplitingBills
         {
             Console.WriteLine();
             Console.WriteLine();
-            StreamReader sr = File.OpenText("expenses.txt.out");
+            StreamReader sr = File.OpenText($"{fileName}.out");
             string s = "";
             while ((s = sr.ReadLine()) != null)
             {
                 Console.WriteLine(s);
             }
             sr.Close();
-            Console.Write("Press any key to exit");
-            //suspend console
-            File.Delete("expenses.txt.out");
-            Console.ReadLine();
         }
 
         //print error message and press any key to continue
@@ -247,12 +270,29 @@ namespace SolutionOfSplitingBills
             }
             return result;
         }
+        public void ClearOutputOrCreateOutputFile()
+        {
+            //reset the output file, clear the content
+            System.IO.File.WriteAllText($"{fileName}.out", string.Empty);
+        }
+        //you must add the [STAHread on the top in order to use the fileopendialog function, otherwise you would get an exception]
+        [STAThread]
         static void Main(string[] args)
         {
             SplitingBills spltb = new SplitingBills();
             spltb.StrRepOfFile();
             spltb.ConvertToParti();
             spltb.PrintToConsole();
+            Console.Write("Do you want to continue testing? Press y to continue or n to exit the application(y/n)");
+            string result = Console.ReadLine();
+            while (result.Equals("y"))
+            {
+                spltb.StrRepOfFile();
+                spltb.ConvertToParti();
+                spltb.PrintToConsole();
+                Console.Write("Do you want to continue testing? Press y to continue or n to exit the application(y/n)");
+                result = Console.ReadLine();
+            }
         }
 
     }
